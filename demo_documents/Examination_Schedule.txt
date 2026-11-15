@@ -1,0 +1,38 @@
+RSR International Academy - Academic Examination Calendar (DEMO DATA)
+Category: Examination Timetable | Year: 2024-2025
+
+=== Page 1: Section 1: Examination Calendar ===
+
+=== DEMO DATA - RSR INTERNATIONAL ACADEMY ===
+EXAMINATION SCHEDULE & ASSESSMENT CALENDAR 2024-2025
+
+1. Formative and Summative Assessment Schedule:
+- Periodic Assessment 1 (PA-1): July 22 to July 29, 2024
+- Mid-Term Examinations (Term 1): September 18 to September 30, 2024
+- Periodic Assessment 2 (PA-2): November 18 to November 25, 2024
+- Pre-Board Examinations (Grades 10 & 12): January 6 to January 18, 2025
+- Annual Final Examinations: March 3 to March 17, 2025
+
+2. Timings During Exam Days:
+Reporting time: 8:30 AM
+Reading time: 9:00 AM to 9:15 AM
+Writing duration: 9:15 AM to 12:15 PM
+Dispersal for all students on exam days is at 12:45 PM.
+
+=== Page 2: Section 2: Examination Rules & Grading System ===
+
+3. Examination Hall Rules:
+Students must be seated in their assigned exam hall 15 minutes before reading time.
+Only transparent stationery pouches and clear water bottles are permitted.
+Possession of unauthorized notes, electronic calculators, or mobile devices constitutes malpractice resulting in immediate paper cancellation.
+
+4. Grading Scale (CBSE Aligned):
+91% - 100%: Grade A1
+81% - 90%: Grade A2
+71% - 80%: Grade B1
+61% - 70%: Grade B2
+51% - 60%: Grade C1
+41% - 50%: Grade C2
+33% - 40%: Grade D (Passing benchmark)
+Below 33%: Grade E (Needs remedial improvement / re-test required)
+

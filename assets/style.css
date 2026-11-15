@@ -1,0 +1,251 @@
+/* SchoolGPT Custom CSS - RSR Technologies */
+/* Designed after official reference UI */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --rsr-navy-900: #0B132B;
+    --rsr-navy-800: #1C2541;
+    --rsr-blue-700: #1D4ED8;
+    --rsr-blue-600: #2563EB;
+    --rsr-purple-700: #6D28D9;
+    --rsr-purple-600: #7C3AED;
+    --rsr-purple-500: #8B5CF6;
+    --rsr-gold-500: #F59E0B;
+    --rsr-green-500: #10B981;
+    --rsr-slate-50: #F8FAFC;
+    --rsr-slate-100: #F1F5F9;
+    --rsr-slate-200: #E2E8F0;
+    --rsr-slate-400: #94A3B8;
+    --rsr-slate-600: #475569;
+    --rsr-slate-800: #1E293B;
+    --rsr-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --rsr-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --rsr-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Base Body & Fonts */
+html, body, [class*="css"] {
+    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
+    color: var(--rsr-navy-900);
+}
+
+/* App Background */
+.stApp {
+    background: linear-gradient(180deg, #F8FAFC 0%, #EEF2F6 100%);
+}
+
+/* Main Top Header Banner */
+.rsr-top-banner {
+    background: linear-gradient(135deg, #0B132B 0%, #1C2541 50%, #2563EB 100%);
+    color: #FFFFFF;
+    padding: 1.2rem 1.8rem;
+    border-radius: 14px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 8px 24px rgba(11, 19, 43, 0.18);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid #F59E0B;
+}
+
+.rsr-brand-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.rsr-brand-subtitle {
+    font-size: 0.85rem;
+    color: #CBD5E1;
+    font-weight: 400;
+    margin-top: 2px;
+}
+
+.rsr-tagline-badge {
+    background: linear-gradient(90deg, #DC2626 0%, #EA580C 100%);
+    color: #FFFFFF;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+}
+
+/* Metric Cards */
+.rsr-metric-card {
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 1.2rem;
+    border: 1px solid var(--rsr-slate-200);
+    box-shadow: var(--rsr-shadow-sm);
+    transition: all 0.25s ease;
+    height: 100%;
+}
+
+.rsr-metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--rsr-shadow-md);
+    border-color: var(--rsr-purple-500);
+}
+
+.rsr-metric-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--rsr-slate-600);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.rsr-metric-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--rsr-navy-900);
+    margin: 6px 0;
+}
+
+.rsr-metric-desc {
+    font-size: 0.75rem;
+    color: var(--rsr-slate-400);
+}
+
+/* Answer Card (Laptop Mockup Replica) */
+.rsr-answer-container {
+    background: #FFFFFF;
+    border-radius: 14px;
+    border: 1px solid #E2E8F0;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+
+.rsr-answer-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #059669;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    border-bottom: 2px solid #E2E8F0;
+    padding-bottom: 0.6rem;
+}
+
+.rsr-answer-body {
+    font-size: 0.96rem;
+    line-height: 1.65;
+    color: #1E293B;
+}
+
+/* Source Citation Cards */
+.rsr-source-card {
+    background: #F8FAFC;
+    border: 1px solid #CBD5E1;
+    border-left: 4px solid var(--rsr-blue-600);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.6rem;
+    transition: all 0.2s ease;
+}
+
+.rsr-source-card:hover {
+    background: #EFF6FF;
+    border-left-color: var(--rsr-purple-600);
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12);
+}
+
+.rsr-source-title {
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--rsr-blue-700);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.rsr-source-meta {
+    font-size: 0.78rem;
+    color: var(--rsr-slate-600);
+    margin-top: 3px;
+    font-weight: 500;
+}
+
+.rsr-source-snippet {
+    font-size: 0.76rem;
+    color: #475569;
+    margin-top: 5px;
+    background: #FFFFFF;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px dashed #CBD5E1;
+}
+
+/* Sidebar Custom Styling */
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #0B132B 0%, #151F3A 100%) !important;
+}
+
+section[data-testid="stSidebar"] * {
+    color: #FFFFFF !important;
+}
+
+section[data-testid="stSidebar"] .stSelectbox label {
+    color: #CBD5E1 !important;
+}
+
+/* Gradient Action Button */
+.stButton > button[kind="primary"] {
+    background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    padding: 0.5rem 1.4rem !important;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3) !important;
+    transition: all 0.2s ease !important;
+}
+
+.stButton > button[kind="primary"]:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(124, 58, 237, 0.45) !important;
+}
+
+/* Role Badges */
+.rsr-role-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Status Indicators */
+.rsr-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.rsr-status-online {
+    background: #DCFCE7;
+    color: #15803D;
+    border: 1px solid #86EFAC;
+}
+
+.rsr-status-offline {
+    background: #FEF3C7;
+    color: #B45309;
+    border: 1px solid #FCD34D;
+}
