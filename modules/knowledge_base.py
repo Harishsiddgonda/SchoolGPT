@@ -1,24 +1,27 @@
 """
 SchoolGPT - Knowledge Base Repository Module
-Allows users to browse and search accessible school documentation.
+Allows users to browse, search, and preview institutional documentation.
 RSR Technologies
 """
 
 import streamlit as st
+import pandas as pd
+from pathlib import Path
 from database.models import get_accessible_documents
 from config.settings import DOCUMENT_CATEGORIES
+from rag.document_loader import load_document
 
 def render_knowledge_base(current_user: dict):
     user_role = current_user.get("role", "Student")
 
-    st.markdown("## 📚 School Knowledge Base")
-    st.caption(f"Explore official policy documents and circulars accessible to: **{user_role}**")
+    st.markdown('<div class="rsr-section-title">📚 Official School Knowledge Repository</div>', unsafe_allow_html=True)
+    st.caption(f"Search, filter, and inspect verified policy documents accessible to role: **{user_role}**")
 
-    # Filter & Search Bar
-    f_col1, f_col2, f_col3 = st.columns([2, 1.2, 1.2])
+    # Filter Bar
+    f_col1, f_col2, f_col3, f_col4 = st.columns([2.2, 1.2, 1, 1])
 
     with f_col1:
-        search_query = st.text_input("🔍 Search documents by title or topic", placeholder="e.g. Leave, Transport, Fees...")
+        search_query = st.text_input("🔍 Search Knowledge Base", placeholder="Search by document title or content keywords...")
 
     with f_col2:
         category_options = ["All Categories"] + DOCUMENT_CATEGORIES
@@ -28,10 +31,13 @@ def render_knowledge_base(current_user: dict):
         academic_years = ["All Years", "2024-2025", "2023-2024"]
         selected_year = st.selectbox("Academic Year", options=academic_years)
 
-    # Fetch documents with role enforcement
+    with f_col4:
+        view_mode = st.radio("Display View", options=["Cards", "Table"], horizontal=True)
+
+    # Fetch documents with RBAC
     docs = get_accessible_documents(user_role)
 
-    # Apply filters
+    # Filter docs
     filtered_docs = []
     for d in docs:
         if search_query:
@@ -47,56 +53,65 @@ def render_knowledge_base(current_user: dict):
     st.markdown(f"**Found {len(filtered_docs)} accessible documents:**")
 
     if not filtered_docs:
-        st.warning("No documents found matching your filter criteria or role permissions.")
+        st.warning("No documents match your filter criteria or role permissions.")
         return
 
-    # Render document cards
-    for doc in filtered_docs:
-        with st.container():
-            st.markdown(f"""
-                <div style="background: #FFFFFF; border-radius: 10px; border: 1px solid #E2E8F0; padding: 1.2rem; margin-bottom: 0.8rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                        <div>
-                            <div style="font-size: 1.15rem; font-weight: 700; color: #1D4ED8;">
-                                📄 {doc['title']}
-                            </div>
-                            <div style="font-size: 0.82rem; color: #64748B; margin-top: 4px;">
-                                <b>Category:</b> {doc['category']} &nbsp;|&nbsp; 
-                                <b>Year:</b> {doc.get('academic_year', '2024-2025')} &nbsp;|&nbsp; 
-                                <b>Format:</b> {doc.get('file_type', 'pdf').upper()} &nbsp;|&nbsp; 
-                                <b>Chunks:</b> {doc.get('chunk_count', 0)}
-                            </div>
-                        </div>
-                        <div>
-                            <span style="background: #DCFCE7; color: #15803D; font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 12px;">
-                                ✓ INDEXED & READY
-                            </span>
-                        </div>
-                    </div>
-                    <div style="margin-top: 8px; font-size: 0.88rem; color: #334155;">
-                        {doc.get('description') or 'Official school documentation.'}
-                    </div>
-                    <div style="margin-top: 10px; font-size: 0.75rem; color: #94A3B8;">
-                        Allowed Roles: <i>{', '.join(doc.get('allowed_roles_list', []))}</i>
-                    </div>
-                </div>
-            """, unsafe_allow_html=True)
+    if view_mode == "Table":
+        table_data = []
+        for d in filtered_docs:
+            table_data.append({
+                "Document Title": d["title"],
+                "Category": d["category"],
+                "Format": d.get("file_type", "pdf").upper(),
+                "Year": d.get("academic_year", "2024-2025"),
+                "Chunks": d.get("chunk_count", 0),
+                "Status": "INDEXED",
+                "Uploaded Date": d.get("upload_date", "N/A")[:10]
+            })
+        st.dataframe(pd.DataFrame(table_data), use_container_width=True)
 
-            with st.expander(f"📖 Preview content of {doc['title']}", expanded=False):
-                try:
-                    from rag.document_loader import load_document
-                    from pathlib import Path
-                    p = Path(doc["file_path"])
-                    if p.exists():
-                        pages, _, _ = load_document(p)
-                        if pages:
-                            st.markdown(f"**Document Page Count:** {len(pages)} pages")
-                            for page in pages[:3]:
-                                st.markdown(f"**--- Page {page.page_number} ({page.section}) ---**")
-                                st.text(page.text[:600] + ("..." if len(page.text) > 600 else ""))
+    else:
+        # Cards View
+        grid_cols = st.columns(2)
+        for idx, doc in enumerate(filtered_docs):
+            with grid_cols[idx % 2]:
+                with st.container():
+                    st.markdown(f"""
+                        <div style="background: #FFFFFF; border-radius: 12px; border: 1px solid #E2E8F0; padding: 1.2rem; margin-bottom: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.04); height: 100%;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 1.5rem;">📄</span>
+                                    <div>
+                                        <div style="font-size: 1.05rem; font-weight: 700; color: #1D4ED8;">
+                                            {doc['title']}
+                                        </div>
+                                        <div style="font-size: 0.78rem; color: #64748B;">
+                                            Category: <b>{doc['category']}</b> • Year: <b>{doc.get('academic_year', '2024-2025')}</b>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span style="background: #DCFCE7; color: #15803D; font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 12px;">
+                                    ✓ INDEXED
+                                </span>
+                            </div>
+                            <div style="font-size: 0.84rem; color: #334155; margin: 10px 0; line-height: 1.45;">
+                                {doc.get('description') or 'Official institutional document.'}
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #F1F5F9; padding-top: 8px; font-size: 0.75rem; color: #94A3B8;">
+                                <span>Format: <b>{doc.get('file_type', 'pdf').upper()}</b> ({doc.get('chunk_count', 0)} chunks)</span>
+                                <span>Roles: <i>{', '.join(doc.get('allowed_roles_list', []))}</i></span>
+                            </div>
+                        </div>
+                    """, unsafe_allow_html=True)
+
+                    with st.expander(f"📖 Inspect {doc['title']}", expanded=False):
+                        p = Path(doc["file_path"])
+                        if p.exists():
+                            pages, _, _ = load_document(p)
+                            if pages:
+                                st.markdown(f"**Total Pages Preserved:** {len(pages)}")
+                                for pg in pages[:3]:
+                                    st.markdown(f"**--- Page {pg.page_number} ({pg.section}) ---**")
+                                    st.text(pg.text[:500] + ("..." if len(pg.text) > 500 else ""))
                         else:
-                            st.info("No preview text available.")
-                    else:
-                        st.warning("Original document file is not found on disk.")
-                except Exception as e:
-                    st.error(f"Error reading preview: {str(e)}")
+                            st.warning("File is stored virtually in ChromaDB index.")

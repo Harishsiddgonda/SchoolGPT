@@ -73,36 +73,36 @@ if "selected_lang" not in st.session_state:
 def render_login_view():
     st.markdown("""
         <div style="text-align: center; margin: 1.5rem 0 2rem 0;">
-            <div style="display: inline-flex; align-items: center; gap: 10px; background: #0B132B; color: #FFFFFF; padding: 10px 24px; border-radius: 30px; box-shadow: 0 4px 15px rgba(11, 19, 43, 0.2);">
-                <span style="font-size: 1.8rem;">🎓</span>
-                <span style="font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px;">SchoolGPT <span style="color: #60A5FA;">– LLM + RAG</span></span>
+            <div style="display: inline-flex; align-items: center; gap: 12px; background: linear-gradient(135deg, #060B1E 0%, #0B132B 50%, #1D4ED8 100%); color: #FFFFFF; padding: 12px 28px; border-radius: 40px; box-shadow: 0 8px 24px rgba(11, 19, 43, 0.25); border: 1px solid rgba(255,255,255,0.15);">
+                <span style="font-size: 2rem;">🎓</span>
+                <span style="font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px;">SchoolGPT <span style="color: #F59E0B;">– LLM + RAG</span></span>
             </div>
-            <div style="font-size: 0.95rem; font-weight: 700; color: #DC2626; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px;">
+            <div style="font-size: 0.95rem; font-weight: 800; color: #DC2626; margin-top: 14px; text-transform: uppercase; letter-spacing: 1.5px;">
                 RSR TECHNOLOGIES • SMART • RELIABLE • INSTANT ANSWERS
             </div>
             <div style="font-size: 0.85rem; color: #64748B; margin-top: 4px;">
-                AI-Powered School Knowledge Base & Role-Grounded Assistant
+                AI-Powered School Knowledge Base & Role-Grounded Education Assistant
             </div>
         </div>
     """, unsafe_allow_html=True)
 
-    login_col1, login_col2, login_col3 = st.columns([1, 1.4, 1])
+    login_col1, login_col2, login_col3 = st.columns([1, 1.5, 1])
 
     with login_col2:
         st.markdown("""
-            <div style="background: #FFFFFF; border-radius: 14px; border: 1px solid #E2E8F0; padding: 2rem; box-shadow: 0 10px 25px rgba(0,0,0,0.06);">
-                <div style="font-size: 1.2rem; font-weight: 700; color: #0F172A; margin-bottom: 0.3rem;">
-                    🔐 Secure Portal Sign In
+            <div style="background: #FFFFFF; border-radius: 16px; border: 1px solid #E2E8F0; padding: 2.2rem; box-shadow: 0 12px 30px rgba(0,0,0,0.06);">
+                <div style="font-size: 1.25rem; font-weight: 800; color: #0F172A; margin-bottom: 0.3rem;">
+                    🔐 Portal Authentication
                 </div>
-                <div style="font-size: 0.82rem; color: #64748B; margin-bottom: 1.2rem;">
-                    Enter your school credentials to access role-authorized knowledge.
+                <div style="font-size: 0.82rem; color: #64748B; margin-bottom: 1.4rem;">
+                    Sign in with your institutional credentials to access role-authorized documents.
                 </div>
         """, unsafe_allow_html=True)
 
         with st.form("login_form"):
             username_input = st.text_input("Username or Email", placeholder="e.g. admin or student_aarav")
             password_input = st.text_input("Password", type="password", placeholder="Enter your password")
-            submit_login = st.form_submit_button("Sign In to SchoolGPT", use_container_width=True)
+            submit_login = st.form_submit_button("Sign In to SchoolGPT 🚀", use_container_width=True)
 
         if submit_login:
             if not username_input or not password_input:
@@ -121,28 +121,36 @@ def render_login_view():
 
         # Quick Demo Role Picker
         st.markdown("<br>", unsafe_allow_html=True)
-        with st.expander("⚡ Quick Demo Role Sign-In (1-Click Test)", expanded=True):
-            st.caption("Select any role to test role-based access control and retrieval immediately:")
+        with st.expander("⚡ 1-Click Quick Demo Sign-In (Test All 6 Roles)", expanded=True):
+            st.caption("Click any persona below to test role-based access control and retrieval immediately:")
 
             demo_accounts = [
-                ("👑 Super Admin", "admin", "AdminPassword123!"),
-                ("🏫 School Administrator", "school_admin", "SchoolAdmin123!"),
-                ("🎓 Principal", "principal", "Principal123!"),
-                ("👩‍🏫 Teacher", "teacher_sharma", "Teacher123!"),
-                ("🎒 Student (Aarav)", "student_aarav", "Student123!"),
-                ("👨‍👩‍👧 Parent (Priya)", "parent_priya", "Parent123!")
+                ("👑 Super Admin", "admin", "AdminPassword123!", "#7C3AED"),
+                ("🏫 School Admin", "school_admin", "SchoolAdmin123!", "#1D4ED8"),
+                ("🎓 Principal", "principal", "Principal123!", "#0284C7"),
+                ("👩‍🏫 Teacher (Sharma)", "teacher_sharma", "Teacher123!", "#059669"),
+                ("🎒 Student (Aarav)", "student_aarav", "Student123!", "#D97706"),
+                ("👨‍👩‍👧 Parent (Priya)", "parent_priya", "Parent123!", "#DC2626")
             ]
 
             d_cols = st.columns(2)
-            for idx, (label, uname, pwd) in enumerate(demo_accounts):
+            for idx, (label, uname, pwd, color) in enumerate(demo_accounts):
                 with d_cols[idx % 2]:
-                    if st.button(label, key=f"demo_btn_{uname}", use_container_width=True):
+                    if st.button(label, key=f"quick_demo_{uname}", use_container_width=True):
                         user, _ = authenticate_user(uname, pwd)
                         if user:
                             st.session_state["authenticated"] = True
                             st.session_state["current_user"] = user
                             st.session_state["current_page"] = "chat"
                             st.rerun()
+
+        # Footer Contact Information matching reference banner
+        st.markdown("""
+            <div style="text-align: center; margin-top: 1.5rem; font-size: 0.78rem; color: #64748B; line-height: 1.6;">
+                <b>RSR TECHNOLOGIES</b> • www.rsrtechnologies.co.in<br>
+                📞 +91 99453 21367 &nbsp;|&nbsp; 📞 +91 77605 94868
+            </div>
+        """, unsafe_allow_html=True)
 
 # ================= AUTHENTICATED VIEW =================
 def render_authenticated_view():
