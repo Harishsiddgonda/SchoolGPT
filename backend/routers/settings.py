@@ -16,7 +16,7 @@ from backend.config import settings
 from backend.rag.gemini_client import gemini_client
 from backend.rag.ollama_client import ollama_client
 
-router = APIRouter(prefix="/api/settings", tags=["System Settings"])
+router = APIRouter(prefix="/settings", tags=["System Settings"])
 
 class SettingsUpdate(BaseModel):
     ai_provider: Optional[str] = None

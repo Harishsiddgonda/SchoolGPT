@@ -14,7 +14,7 @@ from backend.database.models import User, QueryHistory
 from backend.auth.dependencies import get_current_user
 from backend.rag.engine import rag_engine
 
-router = APIRouter(prefix="/api/chat", tags=["Chat & RAG"])
+router = APIRouter(prefix="/chat", tags=["Chat & RAG"])
 
 class ChatQueryRequest(BaseModel):
     question: str

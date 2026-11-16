@@ -12,7 +12,7 @@ from backend.database.db import get_db
 from backend.database.models import User, Bookmark
 from backend.auth.dependencies import get_current_user
 
-router = APIRouter(prefix="/api/bookmarks", tags=["Bookmarks"])
+router = APIRouter(prefix="/bookmarks", tags=["Bookmarks"])
 
 class BookmarkCreate(BaseModel):
     query_id: Optional[int] = None

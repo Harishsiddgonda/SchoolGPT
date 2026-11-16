@@ -12,7 +12,7 @@ from backend.database.db import get_db
 from backend.database.models import User, Document, QueryHistory, Bookmark
 from backend.auth.dependencies import get_current_user
 
-router = APIRouter(prefix="/api/analytics", tags=["Analytics & Reporting"])
+router = APIRouter(prefix="/analytics", tags=["Analytics & Reporting"])
 
 @router.get("/overview")
 def get_analytics_overview(

@@ -13,7 +13,7 @@ from backend.database.models import User
 from backend.auth.security import verify_password, get_password_hash, create_access_token
 from backend.auth.dependencies import get_current_user
 
-router = APIRouter(prefix="/api/auth", tags=["Authentication"])
+router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 class LoginRequest(BaseModel):
     username: str

@@ -15,9 +15,10 @@ from backend.database.models import User, Document, DocumentChunk
 from backend.auth.dependencies import get_current_user, require_min_role, ROLE_HIERARCHY
 from backend.rag.document_loader import load_document
 from backend.rag.text_splitter import split_text_into_chunks
+from backend.services.storage_service import storage_service
 from rag.vector_store import vector_store
 
-router = APIRouter(prefix="/api/documents", tags=["Documents & Knowledge Base"])
+router = APIRouter(prefix="/documents", tags=["Documents & Knowledge Base"])
 
 UPLOAD_DIR = Path("./data/documents")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
@@ -85,11 +86,19 @@ async def upload_document(
             detail=warning_msg or "Could not extract readable text from document."
         )
 
+    # Persist file via Cloud Storage service (S3 or local)
+    storage_path, storage_type = storage_service.upload_file(
+        file_bytes=file_bytes,
+        filename=save_filename,
+        content_type=file.content_type or "application/pdf"
+    )
+
     # Save initial Document record to DB
     doc_record = Document(
         title=clean_title,
         filename=file.filename,
-        file_path=str(dest_path),
+        file_path=storage_path,
+        storage_type=storage_type,
         category=category,
         file_type=ext.replace(".", ""),
         file_size_kb=round(len(file_bytes) / 1024.0, 1),
@@ -179,11 +188,7 @@ def delete_document(
     except Exception:
         pass
 
-    if os.path.exists(doc.file_path):
-        try:
-            os.remove(doc.file_path)
-        except Exception:
-            pass
+    storage_service.delete_file(doc.file_path)
 
     db.delete(doc)
     db.commit()

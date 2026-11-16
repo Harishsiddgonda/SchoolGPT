@@ -13,7 +13,7 @@ from backend.database.models import User
 from backend.auth.dependencies import get_current_user, require_min_role
 from backend.auth.security import get_password_hash
 
-router = APIRouter(prefix="/api/users", tags=["User Management"])
+router = APIRouter(prefix="/users", tags=["User Management"])
 
 class UserRoleUpdate(BaseModel):
     role: str
