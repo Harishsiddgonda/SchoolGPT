@@ -86,6 +86,9 @@ public class MainActivity extends AppCompatActivity {
         settings.setBuiltInZoomControls(false);
         settings.setDisplayZoomControls(false);
         settings.setSupportZoom(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
 
         // Hardware Acceleration
         webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
@@ -166,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnDefaultUrl.setOnClickListener(v -> {
-            String defaultUrl = "http://10.0.2.2:8501";
+            String defaultUrl = getString(R.string.default_server_url);
             etServerUrl.setText(defaultUrl);
             saveServerUrl(defaultUrl);
             loadServerUrl(defaultUrl);

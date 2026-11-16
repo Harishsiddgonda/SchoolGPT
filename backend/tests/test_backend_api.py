@@ -75,3 +75,15 @@ def test_notifications_endpoint():
     assert notif_res.status_code == 200
     notifs = notif_res.json()
     assert len(notifs) >= 1
+
+def test_spa_serving():
+    # Browser request with Accept: text/html
+    html_res = client.get("/", headers={"Accept": "text/html,application/xhtml+xml"})
+    assert html_res.status_code == 200
+    assert "text/html" in html_res.headers.get("content-type", "")
+    assert "SchoolGPT" in html_res.text
+
+    # Android user agent request
+    android_res = client.get("/", headers={"User-Agent": "SchoolGPT-AndroidApp/2.5"})
+    assert android_res.status_code == 200
+    assert "SchoolGPT" in android_res.text

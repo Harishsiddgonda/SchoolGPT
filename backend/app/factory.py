@@ -6,8 +6,10 @@ Tagline: Smart. Reliable. Instant Answers.
 
 from contextlib import asynccontextmanager
 from pathlib import Path
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from backend.config import settings
 from backend.database.db import init_db, SessionLocal
 from backend.models.models import User, Document, DocumentChunk
@@ -143,8 +145,23 @@ def create_app() -> FastAPI:
     app.include_router(users.router, prefix="/api")
     app.include_router(settings_router.router, prefix="/api")
 
+    dist_dir = Path("apps/web/dist")
+    if dist_dir.exists():
+        assets_dir = dist_dir / "assets"
+        if assets_dir.exists():
+            app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="static_assets")
+
     @app.get("/")
-    def root():
+    def root(request: Request):
+        dist_index = dist_dir / "index.html"
+        accept = request.headers.get("accept", "")
+        user_agent = request.headers.get("user-agent", "")
+        is_browser = "text/html" in accept or "Mozilla" in user_agent or "SchoolGPT" in user_agent
+        is_explicit_json = "application/json" in accept and "text/html" not in accept
+
+        if dist_index.exists() and is_browser and not is_explicit_json:
+            return FileResponse(dist_index)
+
         return {
             "organization": settings.ORG_NAME,
             "application": settings.APP_NAME,
@@ -158,5 +175,18 @@ def create_app() -> FastAPI:
     @app.get("/health")
     def health():
         return {"status": "healthy", "service": "SchoolGPT Backend", "version": settings.VERSION}
+
+    @app.get("/{full_path:path}")
+    def serve_spa(full_path: str):
+        # Do not catch /api or /health routes
+        if full_path.startswith("api/") or full_path == "health":
+            return {"detail": "Not Found"}
+        file_candidate = dist_dir / full_path
+        if file_candidate.is_file():
+            return FileResponse(file_candidate)
+        dist_index = dist_dir / "index.html"
+        if dist_index.exists():
+            return FileResponse(dist_index)
+        return {"detail": "Not Found"}
 
     return app
