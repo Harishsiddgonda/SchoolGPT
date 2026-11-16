@@ -1,0 +1,47 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.rsrtechnologies.schoolgpt'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.rsrtechnologies.schoolgpt"
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName "2.5.0"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("../schoolgpt-release.jks")
+            storePassword "rsrtechnologies"
+            keyAlias "schoolgpt"
+            keyPassword "rsrtechnologies"
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            applicationIdSuffix ".debug"
+            debuggable true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
+}

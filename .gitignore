@@ -42,5 +42,12 @@ data/chroma_db/*
 Thumbs.db
 *.log
 
+# Android Build Tools & SDK
+android-sdk/
+android/.gradle/
+android/app/build/
+android/build/
+*.jks
+
 # Streamlit
 .streamlit/secrets.toml

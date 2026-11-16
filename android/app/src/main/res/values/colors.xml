@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#0B132B</color>
+    <color name="colorPrimaryDark">#060B1E</color>
+    <color name="colorAccent">#7C3AED</color>
+    <color name="royalBlue">#1D4ED8</color>
+    <color name="goldAccent">#F59E0B</color>
+    <color name="white">#FFFFFF</color>
+    <color name="surfaceLight">#F8FAFC</color>
+    <color name="textDark">#0F172A</color>
+    <color name="textMuted">#64748B</color>
+    <color name="divider">#E2E8F0</color>
+</resources>
