@@ -1,0 +1,30 @@
+{
+  "name": "schoolgpt-monorepo",
+  "version": "2.5.0",
+  "private": true,
+  "description": "SchoolGPT - LLM + RAG | RSR Technologies Enterprise AI Platform",
+  "workspaces": [
+    "apps/web",
+    "apps/mobile",
+    "shared"
+  ],
+  "scripts": {
+    "web:dev": "cd apps/web && npm run dev",
+    "web:build": "cd apps/web && npm run build",
+    "mobile:start": "cd apps/mobile && npm run start",
+    "backend:start": "uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload"
+  },
+  "keywords": [
+    "schoolgpt",
+    "rag",
+    "llm",
+    "rsr-technologies",
+    "react",
+    "fastapi",
+    "react-native",
+    "expo",
+    "edtech"
+  ],
+  "author": "RSR Technologies",
+  "license": "Proprietary"
+}

@@ -1,4 +1,4 @@
--- SchoolGPT Database Schema
+-- SchoolGPT Database Schema (SQLite)
 -- RSR Technologies
 
 CREATE TABLE IF NOT EXISTS users (

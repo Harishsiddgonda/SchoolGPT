@@ -23,6 +23,14 @@ wheels/
 .installed.cfg
 *.egg
 
+# Node & Frontend
+node_modules/
+apps/web/node_modules/
+apps/mobile/node_modules/
+apps/web/dist/
+.expo/
+*.tsbuildinfo
+
 # Data directories (keep demo data, ignore runtime data)
 data/uploads/*
 !data/uploads/.gitkeep
@@ -48,6 +56,8 @@ android/.gradle/
 android/app/build/
 android/build/
 *.jks
+SchoolGPT-Debug.apk
+SchoolGPT-v2.5.apk
 
 # Streamlit
 .streamlit/secrets.toml
