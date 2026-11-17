@@ -5,10 +5,14 @@ Supports dual AI providers: Google Gemini API and local Ollama.
 """
 
 import os
+import json
 from pydantic_settings import BaseSettings
-from typing import Optional
+from pydantic import field_validator, ConfigDict
+from typing import Optional, Union, List, Any
 
 class Settings(BaseSettings):
+    model_config = ConfigDict(env_file=".env", extra="allow", case_sensitive=False)
+
     APP_NAME: str = "SchoolGPT"
     ORG_NAME: str = "RSR Technologies"
     TAGLINE: str = "Smart. Reliable. Instant Answers."
@@ -41,8 +45,8 @@ class Settings(BaseSettings):
     TOP_K_CHUNKS: int = 4
     SIMILARITY_THRESHOLD: float = 0.40
 
-    # CORS
-    CORS_ORIGINS: list = [
+    # CORS: Accepts list of strings or comma-separated string or '*'
+    CORS_ORIGINS: Union[List[str], str] = [
         "http://localhost:5173",
         "http://localhost:3000",
         "http://localhost:8080",
@@ -53,8 +57,23 @@ class Settings(BaseSettings):
         "*"
     ]
 
-    class Config:
-        env_file = ".env"
-        extra = "allow"
+    @field_validator("CORS_ORIGINS", mode="after")
+    @classmethod
+    def assemble_cors_origins(cls, v: Any) -> List[str]:
+        if isinstance(v, str):
+            v_str = v.strip()
+            if not v_str or v_str == "*":
+                return ["*"]
+            if v_str.startswith("[") and v_str.endswith("]"):
+                try:
+                    parsed = json.loads(v_str)
+                    if isinstance(parsed, list):
+                        return [str(x).strip() for x in parsed]
+                except Exception:
+                    pass
+            return [i.strip() for i in v_str.split(",") if i.strip()]
+        elif isinstance(v, (list, tuple)):
+            return [str(x).strip() for x in v]
+        return ["*"]
 
 settings = Settings()
