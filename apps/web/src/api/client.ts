@@ -1,16 +1,23 @@
 import axios from 'axios';
 import { User, DocumentItem, QueryHistoryItem, BookmarkItem, AnalyticsData, SystemSettingsData, Citation } from '../types';
 
-const API_BASE = '/api';
+export const getBaseURL = () => {
+  const custom = localStorage.getItem('schoolgpt_custom_api_url');
+  if (custom) return custom.replace(/\/$/, '');
+  if (typeof window !== 'undefined' && (window.location.protocol === 'file:' || window.location.origin === 'null')) {
+    return 'http://192.168.1.9:8000/api';
+  }
+  return '/api';
+};
 
 const api = axios.create({
-  baseURL: API_BASE,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
 api.interceptors.request.use((config) => {
+  config.baseURL = getBaseURL();
   const token = localStorage.getItem('schoolgpt_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;

@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText etServerUrl;
     private Button btnRetry;
     private Button btnDefaultUrl;
+    private Button btnOfflineMode;
+    private Button btnAutoDetect;
 
     private ValueCallback<Uri[]> fileUploadCallback;
     private SharedPreferences prefs;
@@ -57,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         etServerUrl = findViewById(R.id.etServerUrl);
         btnRetry = findViewById(R.id.btnRetry);
         btnDefaultUrl = findViewById(R.id.btnDefaultUrl);
+        btnOfflineMode = findViewById(R.id.btnOfflineMode);
+        btnAutoDetect = findViewById(R.id.btnAutoDetect);
 
         setupWebView();
         setupControls();
@@ -67,7 +71,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String getServerUrl() {
-        return prefs.getString(KEY_SERVER_URL, getString(R.string.default_server_url));
+        String saved = prefs.getString(KEY_SERVER_URL, null);
+        if (saved == null || saved.contains("192.168.1.2") || saved.contains("8501")) {
+            return getString(R.string.default_server_url);
+        }
+        return saved;
     }
 
     private void saveServerUrl(String url) {
@@ -81,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
         settings.setDatabaseEnabled(true);
         settings.setAllowFileAccess(true);
         settings.setAllowContentAccess(true);
+        settings.setAllowFileAccessFromFileURLs(true);
+        settings.setAllowUniversalAccessFromFileURLs(true);
         settings.setLoadWithOverviewMode(true);
         settings.setUseWideViewPort(true);
         settings.setBuiltInZoomControls(false);
@@ -163,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupControls() {
         btnRetry.setOnClickListener(v -> {
             String url = etServerUrl.getText().toString().trim();
-            if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            if (!url.startsWith("http://") && !url.startsWith("https://") && !url.startsWith("file://")) {
                 url = "http://" + url;
             }
             saveServerUrl(url);
@@ -176,6 +186,58 @@ public class MainActivity extends AppCompatActivity {
             saveServerUrl(defaultUrl);
             loadServerUrl(defaultUrl);
         });
+
+        btnOfflineMode.setOnClickListener(v -> {
+            String localUrl = "file:///android_asset/web/index.html";
+            saveServerUrl(localUrl);
+            loadServerUrl(localUrl);
+        });
+
+        btnAutoDetect.setOnClickListener(v -> {
+            autoDetectServer();
+        });
+    }
+
+    private void autoDetectServer() {
+        progressBar.setVisibility(View.VISIBLE);
+        Toast.makeText(this, "Probing active SchoolGPT servers on hotspot...", Toast.LENGTH_SHORT).show();
+
+        new Thread(() -> {
+            String[] candidates = {
+                "http://192.168.1.9:8000",
+                "http://192.168.1.2:8000",
+                "http://192.168.1.1:8000",
+                "http://10.0.2.2:8000"
+            };
+            String found = null;
+            for (String cand : candidates) {
+                try {
+                    java.net.URL url = new java.net.URL(cand + "/health");
+                    java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
+                    conn.setConnectTimeout(900);
+                    conn.setReadTimeout(900);
+                    conn.setRequestMethod("GET");
+                    if (conn.getResponseCode() == 200) {
+                        found = cand;
+                        break;
+                    }
+                } catch (Exception ignored) {}
+            }
+
+            final String finalFound = found;
+            runOnUiThread(() -> {
+                progressBar.setVisibility(View.GONE);
+                if (finalFound != null) {
+                    Toast.makeText(MainActivity.this, "Connected to server: " + finalFound, Toast.LENGTH_LONG).show();
+                    etServerUrl.setText(finalFound);
+                    saveServerUrl(finalFound);
+                    loadServerUrl(finalFound);
+                } else {
+                    Toast.makeText(MainActivity.this, "Server not reachable yet. Launching embedded offline app.", Toast.LENGTH_LONG).show();
+                    loadServerUrl("file:///android_asset/web/index.html");
+                }
+            });
+        }).start();
     }
 
     private void loadServerUrl(String url) {
