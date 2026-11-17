@@ -45,35 +45,19 @@ class Settings(BaseSettings):
     TOP_K_CHUNKS: int = 4
     SIMILARITY_THRESHOLD: float = 0.40
 
-    # CORS: Accepts list of strings or comma-separated string or '*'
-    CORS_ORIGINS: Union[List[str], str] = [
-        "http://localhost:5173",
-        "http://localhost:3000",
-        "http://localhost:8080",
-        "http://127.0.0.1:5173",
-        "http://127.0.0.1:3000",
-        "http://127.0.0.1:8080",
-        "https://schoolgpt-rsr.onrender.com",
-        "*"
-    ]
-
-    @field_validator("CORS_ORIGINS", mode="after")
-    @classmethod
-    def assemble_cors_origins(cls, v: Any) -> List[str]:
-        if isinstance(v, str):
-            v_str = v.strip()
-            if not v_str or v_str == "*":
-                return ["*"]
-            if v_str.startswith("[") and v_str.endswith("]"):
-                try:
-                    parsed = json.loads(v_str)
-                    if isinstance(parsed, list):
-                        return [str(x).strip() for x in parsed]
-                except Exception:
-                    pass
-            return [i.strip() for i in v_str.split(",") if i.strip()]
-        elif isinstance(v, (list, tuple)):
-            return [str(x).strip() for x in v]
-        return ["*"]
+    # CORS: Dynamic property supporting strings, wildcards (*), and JSON arrays
+    @property
+    def CORS_ORIGINS(self) -> List[str]:
+        raw = os.getenv("CORS_ORIGINS", "*").strip()
+        if not raw or raw == "*":
+            return ["*"]
+        if raw.startswith("[") and raw.endswith("]"):
+            try:
+                parsed = json.loads(raw)
+                if isinstance(parsed, list):
+                    return [str(x).strip() for x in parsed]
+            except Exception:
+                pass
+        return [i.strip() for i in raw.split(",") if i.strip()]
 
 settings = Settings()
