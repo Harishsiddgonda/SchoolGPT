@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { MessageSquarePlus, BookOpen, Bookmark, Clock } from 'lucide-react';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
 import { LoginPage } from './pages/LoginPage';
@@ -85,7 +86,7 @@ export function App() {
         />
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto bg-slate-50">
+        <main className="flex-1 overflow-y-auto bg-slate-50 pb-20 md:pb-0">
           {activeTab === 'chat' && <ChatPage user={user} language={language} />}
           {activeTab === 'knowledge' && <KnowledgeBasePage user={user} />}
           {activeTab === 'upload' && <UploadPage user={user} onSuccess={() => setActiveTab('knowledge')} />}
@@ -96,6 +97,57 @@ export function App() {
           {activeTab === 'settings' && <SettingsPage />}
         </main>
       </div>
+
+      {/* Mobile Bottom Navigation Bar (Visible only on mobile screens < 768px) */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 px-3 py-2 flex items-center justify-around shadow-2xl">
+        <button
+          onClick={() => setActiveTab('chat')}
+          className={`flex flex-col items-center py-1.5 px-3 rounded-xl transition-all ${
+            activeTab === 'chat'
+              ? 'text-white bg-gradient-to-tr from-purple-600 to-indigo-600 shadow-md scale-105'
+              : 'text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <MessageSquarePlus className="w-5 h-5" />
+          <span className="text-[10px] font-bold mt-0.5">Ask AI</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('knowledge')}
+          className={`flex flex-col items-center py-1.5 px-3 rounded-xl transition-all ${
+            activeTab === 'knowledge'
+              ? 'text-blue-400 font-bold bg-blue-600/20 scale-105'
+              : 'text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <BookOpen className="w-5 h-5" />
+          <span className="text-[10px] font-bold mt-0.5">Docs</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('bookmarks')}
+          className={`flex flex-col items-center py-1.5 px-3 rounded-xl transition-all ${
+            activeTab === 'bookmarks'
+              ? 'text-amber-400 font-bold bg-amber-600/20 scale-105'
+              : 'text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <Bookmark className="w-5 h-5" />
+          <span className="text-[10px] font-bold mt-0.5">Saved</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('history')}
+          className={`flex flex-col items-center py-1.5 px-3 rounded-xl transition-all ${
+            activeTab === 'history'
+              ? 'text-indigo-400 font-bold bg-indigo-600/20 scale-105'
+              : 'text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <Clock className="w-5 h-5" />
+          <span className="text-[10px] font-bold mt-0.5">History</span>
+        </button>
+      </nav>
     </div>
   );
 }

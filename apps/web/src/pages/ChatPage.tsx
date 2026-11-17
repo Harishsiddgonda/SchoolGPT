@@ -10,7 +10,10 @@ import {
   Sparkles, 
   Clock, 
   Info,
-  BookOpen
+  BookOpen,
+  Volume2,
+  VolumeX,
+  GraduationCap
 } from 'lucide-react';
 import { chatAPI, bookmarkAPI } from '../api/client';
 import { Citation, User } from '../types';
@@ -31,6 +34,34 @@ export const ChatPage: React.FC<ChatPageProps> = ({ user, language }) => {
   const [copied, setCopied] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
   const [selectedCitation, setSelectedCitation] = useState<Citation | null>(null);
+  const [speaking, setSpeaking] = useState(false);
+
+  const studentShortcuts = [
+    { label: "🎒 Leave Policy", query: "What is the schools leave policy for students?" },
+    { label: "📅 Exams & Schedule", query: "What are the examination dates and guidelines?" },
+    { label: "💻 Lab & Library", query: "What are the rules for computer lab and library usage?" },
+    { label: "⚽ Sports & Clubs", query: "What extracurricular activities and sports clubs are available?" },
+    { label: "🚌 Timings & Bus", query: "What are the school operating hours and bus routes?" }
+  ];
+
+  const handleSpeak = () => {
+    if (!answer) return;
+    if ('speechSynthesis' in window) {
+      if (speaking) {
+        window.speechSynthesis.cancel();
+        setSpeaking(false);
+      } else {
+        window.speechSynthesis.cancel();
+        const cleanText = answer.replace(/[#*`_\[\]()]/g, ' ');
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        utterance.lang = language === 'kn' ? 'kn-IN' : language === 'hi' ? 'hi-IN' : 'en-US';
+        utterance.onend = () => setSpeaking(false);
+        utterance.onerror = () => setSpeaking(false);
+        setSpeaking(true);
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+  };
 
   const sampleQuestions = [
     "What is the schools leave policy for students?",
@@ -143,6 +174,30 @@ export const ChatPage: React.FC<ChatPageProps> = ({ user, language }) => {
           ))}
         </div>
 
+        {/* Student Quick Topic Shortcuts */}
+        <div className="pt-2 border-t border-slate-100">
+          <div className="flex items-center gap-1.5 mb-2">
+            <GraduationCap className="w-4 h-4 text-indigo-600" />
+            <span className="text-[11px] font-bold text-indigo-900 uppercase tracking-wider">
+              Student Quick Topics:
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {studentShortcuts.map((s, idx) => (
+              <button
+                key={idx}
+                onClick={() => {
+                  setQuestion(s.query);
+                  handleAsk(s.query);
+                }}
+                className="text-xs bg-indigo-50/90 hover:bg-indigo-100 text-indigo-800 font-semibold px-3 py-1.5 rounded-xl border border-indigo-200 transition-all active:scale-95 shadow-2xs"
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
       </div>
 
       {/* Main Results Display: Two Side-by-Side Cards (Answer + Sources Cited) */}
@@ -174,6 +229,15 @@ export const ChatPage: React.FC<ChatPageProps> = ({ user, language }) => {
                     {model}
                   </span>
                 )}
+                <button
+                  onClick={handleSpeak}
+                  title={speaking ? "Stop listening" : "Listen to answer"}
+                  className={`p-1.5 rounded-lg transition-colors ${
+                    speaking ? 'text-purple-600 bg-purple-100 animate-pulse' : 'text-slate-400 hover:text-purple-600 hover:bg-slate-100'
+                  }`}
+                >
+                  {speaking ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                </button>
                 <button
                   onClick={handleCopy}
                   title="Copy answer"

@@ -30,7 +30,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const isTeacherOrAbove = isAdminOrPrincipal || userRole === 'Teacher';
 
   return (
-    <aside className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between shrink-0 shadow-xl min-h-[calc(100vh-4rem)]">
+    <aside className="hidden md:flex w-64 bg-slate-900 border-r border-slate-800 flex-col justify-between shrink-0 shadow-xl min-h-[calc(100vh-4rem)]">
       
       {/* Top Section */}
       <div className="p-4 space-y-6">

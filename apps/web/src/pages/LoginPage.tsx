@@ -110,6 +110,38 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
         {/* Right Side: Login Card */}
         <div className="lg:col-span-6 bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
+          
+          {/* Quick 1-Tap Student Access Banner */}
+          <div className="mb-5 p-3.5 rounded-xl bg-gradient-to-r from-blue-900/60 via-indigo-900/50 to-purple-900/60 border border-blue-500/40 shadow-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2.5">
+                <div className="w-8 h-8 rounded-lg bg-indigo-500/30 flex items-center justify-center text-indigo-300">
+                  <GraduationCap className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-white leading-tight">Student 1-Tap Login</p>
+                  <p className="text-[10px] text-blue-200">Instant access for student queries & syllabus</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setUsername('student');
+                  setPassword('password123');
+                  authAPI.login('student', 'password123').then((data) => {
+                    localStorage.setItem('schoolgpt_token', data.access_token);
+                    onLoginSuccess(data.user, data.access_token);
+                  }).catch(() => {
+                    setError('Student login failed');
+                  });
+                }}
+                className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-3.5 py-1.5 rounded-lg shadow transition-all active:scale-95 shrink-0"
+              >
+                Enter
+              </button>
+            </div>
+          </div>
+
           <div className="flex items-center space-x-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
               <Lock className="w-5 h-5" />
