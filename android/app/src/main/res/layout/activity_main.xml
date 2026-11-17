@@ -80,7 +80,7 @@
             android:padding="12dp"
             android:textColor="#0F172A"
             android:textSize="14sp"
-            android:hint="http://192.168.1.2:8000"
+            android:hint="http://192.168.1.9:8000"
             android:inputType="textUri"
             android:layout_marginBottom="16dp" />
 

@@ -4,7 +4,7 @@
     <string name="app_subtitle">AI School Assistant</string>
     <string name="organization">RSR Technologies</string>
     <string name="tagline">Smart • Reliable • Instant Answers</string>
-    <string name="default_server_url">http://192.168.1.2:8000</string>
+    <string name="default_server_url">http://192.168.1.9:8000</string>
     <string name="retry">Retry Connection</string>
     <string name="settings">Server Settings</string>
     <string name="connection_error_title">Cannot Connect to SchoolGPT Server</string>
