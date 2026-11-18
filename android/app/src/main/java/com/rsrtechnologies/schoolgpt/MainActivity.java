@@ -14,6 +14,7 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.webkit.WebViewAssetLoader;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnDefaultUrl;
     private Button btnOfflineMode;
     private Button btnAutoDetect;
+    private WebViewAssetLoader assetLoader;
 
     private ValueCallback<Uri[]> fileUploadCallback;
     private SharedPreferences prefs;
@@ -62,12 +65,16 @@ public class MainActivity extends AppCompatActivity {
         btnOfflineMode = findViewById(R.id.btnOfflineMode);
         btnAutoDetect = findViewById(R.id.btnAutoDetect);
 
+        assetLoader = new WebViewAssetLoader.Builder()
+                .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
+                .build();
+
         setupWebView();
         setupControls();
 
-        String currentUrl = getServerUrl();
-        etServerUrl.setText(currentUrl);
-        loadServerUrl(currentUrl);
+        // 100% foolproof: Always load the guaranteed local asset UI directly!
+        etServerUrl.setText(getString(R.string.default_server_url));
+        loadServerUrl("https://appassets.androidplatform.net/assets/web/index.html");
     }
 
     private String getServerUrl() {
@@ -111,6 +118,15 @@ public class MainActivity extends AppCompatActivity {
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+                Uri url = request.getUrl();
+                if (url != null && "appassets.androidplatform.net".equals(url.getHost())) {
+                    return assetLoader.shouldInterceptRequest(url);
+                }
+                return super.shouldInterceptRequest(view, request);
+            }
+
+            @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
                 progressBar.setVisibility(View.VISIBLE);
@@ -128,9 +144,15 @@ public class MainActivity extends AppCompatActivity {
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 super.onReceivedError(view, request, error);
                 if (request.isForMainFrame()) {
-                    progressBar.setVisibility(View.GONE);
-                    webView.setVisibility(View.GONE);
-                    errorLayout.setVisibility(View.VISIBLE);
+                    String reqUrl = request.getUrl() != null ? request.getUrl().toString() : "";
+                    if (!reqUrl.contains("appassets.androidplatform.net")) {
+                        Toast.makeText(MainActivity.this, "Remote server unreachable. Loading local app.", Toast.LENGTH_SHORT).show();
+                        loadServerUrl("https://appassets.androidplatform.net/assets/web/index.html");
+                    } else {
+                        progressBar.setVisibility(View.GONE);
+                        webView.setVisibility(View.GONE);
+                        errorLayout.setVisibility(View.VISIBLE);
+                    }
                 }
             }
         });
@@ -188,9 +210,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnOfflineMode.setOnClickListener(v -> {
-            String localUrl = "file:///android_asset/web/index.html";
-            saveServerUrl(localUrl);
-            loadServerUrl(localUrl);
+            loadServerUrl("https://appassets.androidplatform.net/assets/web/index.html");
         });
 
         btnAutoDetect.setOnClickListener(v -> {
@@ -204,6 +224,7 @@ public class MainActivity extends AppCompatActivity {
 
         new Thread(() -> {
             String[] candidates = {
+                "http://192.168.1.10:8000",
                 "http://192.168.1.9:8000",
                 "http://192.168.1.2:8000",
                 "http://192.168.1.1:8000",

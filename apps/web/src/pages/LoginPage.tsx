@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { GraduationCap, ShieldCheck, Sparkles, ArrowRight, UserCheck, CheckCircle2, Lock, BookOpen } from 'lucide-react';
-import { authAPI } from '../api/client';
+import { authAPI, getBaseURL, autoDetectApiServer } from '../api/client';
 import { User } from '../types';
 
 interface LoginPageProps {
@@ -12,6 +12,23 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const [password, setPassword] = useState('password123');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [serverUrl, setServerUrl] = useState(() => getBaseURL());
+  const [detectingServer, setDetectingServer] = useState(false);
+
+  const handleAutoDetect = async () => {
+    setDetectingServer(true);
+    try {
+      const found = await autoDetectApiServer();
+      if (found) {
+        setServerUrl(found + '/api');
+        setError('');
+      } else {
+        setError('No active server detected. Please ensure server is running on http://192.168.1.10:8000');
+      }
+    } finally {
+      setDetectingServer(false);
+    }
+  };
 
   const demoRoles = [
     { role: 'Super Admin', username: 'admin', label: 'Admin', desc: 'Full permissions', color: 'from-purple-600 to-indigo-600' },
@@ -111,6 +128,24 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         {/* Right Side: Login Card */}
         <div className="lg:col-span-6 bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
           
+          {/* Server Connection Indicator */}
+          <div className="mb-4 flex items-center justify-between px-3.5 py-2 bg-slate-950/80 border border-slate-800/90 rounded-xl text-xs">
+            <div className="flex items-center space-x-2 truncate">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+              <span className="text-slate-400 truncate text-[11px]">
+                Server: <strong className="text-slate-200">{serverUrl.replace(/\/api$/, '')}</strong>
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={handleAutoDetect}
+              disabled={detectingServer}
+              className="text-blue-400 hover:text-blue-300 font-bold text-[11px] shrink-0 ml-2"
+            >
+              {detectingServer ? 'Scanning...' : 'Auto-Detect 🔍'}
+            </button>
+          </div>
+
           {/* Quick 1-Tap Student Access Banner */}
           <div className="mb-5 p-3.5 rounded-xl bg-gradient-to-r from-blue-900/60 via-indigo-900/50 to-purple-900/60 border border-blue-500/40 shadow-lg">
             <div className="flex items-center justify-between">

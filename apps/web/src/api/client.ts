@@ -4,10 +4,39 @@ import { User, DocumentItem, QueryHistoryItem, BookmarkItem, AnalyticsData, Syst
 export const getBaseURL = () => {
   const custom = localStorage.getItem('schoolgpt_custom_api_url');
   if (custom) return custom.replace(/\/$/, '');
-  if (typeof window !== 'undefined' && (window.location.protocol === 'file:' || window.location.origin === 'null')) {
-    return 'http://192.168.1.9:8000/api';
+  if (typeof window !== 'undefined') {
+    if (
+      window.location.protocol === 'file:' ||
+      window.location.origin === 'null' ||
+      window.location.hostname === 'appassets.androidplatform.net'
+    ) {
+      return 'http://192.168.1.10:8000/api';
+    }
   }
   return '/api';
+};
+
+export const autoDetectApiServer = async (): Promise<string | null> => {
+  const candidates = [
+    'http://192.168.1.10:8000',
+    'http://192.168.1.9:8000',
+    'http://192.168.1.2:8000',
+    'http://10.0.2.2:8000',
+    'http://localhost:8000'
+  ];
+  for (const host of candidates) {
+    try {
+      const res = await axios.get(`${host}/health`, { timeout: 1000 });
+      if (res.status === 200) {
+        const fullApi = `${host}/api`;
+        localStorage.setItem('schoolgpt_custom_api_url', fullApi);
+        return host;
+      }
+    } catch (e) {
+      // continue next candidate
+    }
+  }
+  return null;
 };
 
 const api = axios.create({
