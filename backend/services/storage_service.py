@@ -7,8 +7,16 @@ RSR Technologies
 import os
 from pathlib import Path
 from typing import Tuple, Optional
-import boto3
-from botocore.exceptions import ClientError
+
+try:
+    import boto3
+    from botocore.exceptions import ClientError
+    HAS_BOTO3 = True
+except ImportError:
+    boto3 = None
+    ClientError = Exception
+    HAS_BOTO3 = False
+
 from backend.config import settings
 
 class StorageService:
@@ -24,7 +32,7 @@ class StorageService:
         self._init_client()
 
     def _init_client(self):
-        if self.bucket_name and self.access_key and self.secret_key:
+        if HAS_BOTO3 and self.bucket_name and self.access_key and self.secret_key:
             try:
                 self._s3_client = boto3.client(
                     "s3",
