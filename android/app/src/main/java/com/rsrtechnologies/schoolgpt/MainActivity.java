@@ -146,12 +146,7 @@ public class MainActivity extends AppCompatActivity {
                 if (request.isForMainFrame()) {
                     String reqUrl = request.getUrl() != null ? request.getUrl().toString() : "";
                     if (!reqUrl.contains("appassets.androidplatform.net")) {
-                        Toast.makeText(MainActivity.this, "Remote server unreachable. Loading local app.", Toast.LENGTH_SHORT).show();
                         loadServerUrl("https://appassets.androidplatform.net/assets/web/index.html");
-                    } else {
-                        progressBar.setVisibility(View.GONE);
-                        webView.setVisibility(View.GONE);
-                        errorLayout.setVisibility(View.VISIBLE);
                     }
                 }
             }
