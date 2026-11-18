@@ -177,6 +177,20 @@ def create_app() -> FastAPI:
     def health():
         return {"status": "healthy", "service": "SchoolGPT Backend", "version": settings.VERSION}
 
+    @app.get("/SchoolGPT.apk")
+    @app.get("/download-apk")
+    def download_apk():
+        apk_path = Path("SchoolGPT.apk")
+        if not apk_path.exists():
+            apk_path = Path("android/app/build/outputs/apk/release/app-release.apk")
+        if apk_path.exists():
+            return FileResponse(
+                apk_path,
+                media_type="application/vnd.android.package-archive",
+                filename="SchoolGPT.apk"
+            )
+        return {"detail": "APK not found"}
+
     @app.get("/{full_path:path}")
     def serve_spa(full_path: str):
         # Do not catch /api or /health routes
