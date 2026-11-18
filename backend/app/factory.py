@@ -173,6 +173,7 @@ def create_app() -> FastAPI:
         }
 
     @app.get("/health")
+    @app.get("/api/health")
     def health():
         return {"status": "healthy", "service": "SchoolGPT Backend", "version": settings.VERSION}
 
