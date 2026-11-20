@@ -149,6 +149,11 @@ def create_app() -> FastAPI:
     app.include_router(settings_router.router, prefix="/api")
 
     dist_dir = Path("apps/web/dist")
+    if not dist_dir.exists() or not (dist_dir / "index.html").exists():
+        fallback_dir = Path("android/app/src/main/assets/web")
+        if fallback_dir.exists() and (fallback_dir / "index.html").exists():
+            dist_dir = fallback_dir
+
     if dist_dir.exists():
         assets_dir = dist_dir / "assets"
         if assets_dir.exists():
@@ -158,11 +163,9 @@ def create_app() -> FastAPI:
     def root(request: Request):
         dist_index = dist_dir / "index.html"
         accept = request.headers.get("accept", "")
-        user_agent = request.headers.get("user-agent", "")
-        is_browser = "text/html" in accept or "Mozilla" in user_agent or "SchoolGPT" in user_agent
         is_explicit_json = "application/json" in accept and "text/html" not in accept
 
-        if dist_index.exists() and is_browser and not is_explicit_json:
+        if dist_index.exists() and not is_explicit_json:
             return FileResponse(dist_index)
 
         return {
