@@ -10,7 +10,7 @@ export const getBaseURL = () => {
       window.location.origin === 'null' ||
       window.location.hostname === 'appassets.androidplatform.net'
     ) {
-      return 'http://192.168.1.10:8000/api';
+      return 'https://schoolgpt.onrender.com/api';
     }
   }
   return '/api';
@@ -18,6 +18,7 @@ export const getBaseURL = () => {
 
 export const autoDetectApiServer = async (): Promise<string | null> => {
   const candidates = [
+    'https://schoolgpt.onrender.com',
     'https://schoolgpt-api.onrender.com',
     'http://192.168.1.10:8000',
     'http://192.168.1.9:8000',
