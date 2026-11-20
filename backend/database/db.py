@@ -20,11 +20,20 @@ connect_args = {}
 if db_url.startswith("sqlite"):
     connect_args = {"check_same_thread": False}
 
-engine = create_engine(
-    db_url,
-    connect_args=connect_args,
-    pool_pre_ping=True
-)
+try:
+    engine = create_engine(
+        db_url,
+        connect_args=connect_args,
+        pool_pre_ping=True
+    )
+except Exception as e:
+    print(f"Notice: Primary create_engine failed ({e}). Falling back to SQLite.")
+    db_url = "sqlite:///./schoolgpt_backend.db"
+    engine = create_engine(
+        db_url,
+        connect_args={"check_same_thread": False},
+        pool_pre_ping=True
+    )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
