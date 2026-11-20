@@ -9,9 +9,12 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 from backend.config import settings
 
 db_url = settings.DATABASE_URL
-# Render provides postgres://, SQLAlchemy requires postgresql://
+# Render provides postgres:// or postgresql://
+# Explicitly use postgresql+psycopg2:// so SQLAlchemy uses psycopg2-binary
 if db_url.startswith("postgres://"):
-    db_url = db_url.replace("postgres://", "postgresql://", 1)
+    db_url = db_url.replace("postgres://", "postgresql+psycopg2://", 1)
+elif db_url.startswith("postgresql://") and "+" not in db_url.split("://")[0]:
+    db_url = db_url.replace("postgresql://", "postgresql+psycopg2://", 1)
 
 connect_args = {}
 if db_url.startswith("sqlite"):
@@ -35,11 +38,17 @@ def get_db():
 
 def init_db():
     """Initializes tables and enables vector extension if PostgreSQL."""
-    if db_url.startswith("postgresql"):
-        with engine.connect() as conn:
-            try:
-                conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector;"))
-                conn.commit()
-            except Exception as e:
-                print(f"Notice: vector extension check: {e}")
-    Base.metadata.create_all(bind=engine)
+    if "postgresql" in db_url:
+        try:
+            with engine.connect() as conn:
+                try:
+                    conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector;"))
+                    conn.commit()
+                except Exception as e:
+                    print(f"Notice: vector extension check: {e}")
+        except Exception as e:
+            print(f"Notice: Database connection attempt: {e}")
+    try:
+        Base.metadata.create_all(bind=engine)
+    except Exception as e:
+        print(f"Notice: Base.metadata.create_all: {e}")

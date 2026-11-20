@@ -110,7 +110,10 @@ def seed_initial_data():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup: Seed Database
-    seed_initial_data()
+    try:
+        seed_initial_data()
+    except Exception as e:
+        print(f"Notice: initial data seeding notice: {e}")
     yield
     # Shutdown
 
